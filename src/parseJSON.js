@@ -33,7 +33,7 @@ var typeDetector = function(string) {
   };
   if(typeDict[string[0]]) {
     return typeDict[string[0]];
-  } else if(parseInt(string[0])) {
+  } else if((Math.abs(string[0]-'0')>=0 && Math.abs(string[0]-'0')<=9) || (string-'0').toString() != 'NaN') {
     return "number";
   } else {
     // throw new Error(string + 'cannot be parsed');
@@ -111,6 +111,7 @@ var separate = function(string) { // string is expected to be the inners of an o
 };
 
 var parseJSON = function(json) {
+  if(json==="") return;
   // your code goes here
   // determine what the json is...
   // obj:
@@ -142,7 +143,7 @@ var parseJSON = function(json) {
     var items = separate(json.substring(1, json.length-1));
     for(var i=0; i<items.length; i++) {
       var parsed = parseJSON(items[i]);
-      if(Boolean(parsed)) {
+      if(parsed === null || parsed != undefined) {
         res.push(parsed);
       }
     }
@@ -150,7 +151,6 @@ var parseJSON = function(json) {
   }
   // strings:
     // if double quotes are present, return content inside the double quote, including the double quotes
-    // else if the strings correspond to any boolean, return the said boolean
   if(objType === "string") {
     return json.substring(1, json.length-1);
   }
@@ -158,5 +158,14 @@ var parseJSON = function(json) {
     // return corresponding numbers
   if(objType === "number") {
     return json - '0';
+  }
+
+  // booleans:
+  if(json === 'null') {
+    return null;
+  } else if(json === 'true') {
+    return true;
+  } else if(json === 'false') {
+    return false;
   }
 };
